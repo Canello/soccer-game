@@ -1,31 +1,36 @@
-import { State } from "./State.js";
+import { MAP } from "../utils/settings.js";
 import { KeyboardListener } from "./KeyboardListener.js";
 import { Player } from "./Player.js";
 import { Ball } from "./Ball.js";
 import { Drawer } from "./Drawer.js";
 import { Goal } from "./Goal.js";
 import { Ground } from "./Ground.js";
+import { PhysicsEngine } from "./PhysicsEngine.js";
 
 export class Game {
     constructor() {
-        this.isPlaying = false;
-        this.state = new State();
-        this.keyboardListener = new KeyboardListener();
-        this.player = new Player(20, 20, 40, 60);
         this.ball = new Ball();
-        this.ground = new Ground(0, 0, 30, 20);
-        this.goal = new Goal(4, 4, 30, 20);
+        this.ground = new Ground(0, 0, MAP.width, 20);
+        this.player = new Player(MAP.width / 3, this.ground.height);
+        this.goal = new Goal(0, this.ground.height, 10, 80);
+
+        this.keyboardListener = new KeyboardListener();
+        this.physicsEngine = new PhysicsEngine();
         this.drawer = new Drawer(
             this.ball,
             this.ground,
             this.player,
             this.goal
         );
+
+        this.isPlaying = false;
     }
 
     start() {
         this.isPlaying = true;
+        // while (this.isPlaying) {
         this.gameLoop();
+        // }
     }
 
     stop() {
@@ -33,15 +38,7 @@ export class Game {
     }
 
     gameLoop() {
-        // while (this.isPlaying) {
-        this.update();
+        this.physicsEngine.apply();
         this.drawer.draw();
-        // }
-    }
-
-    update() {}
-
-    draw() {
-        this.player.draw();
     }
 }

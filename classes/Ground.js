@@ -1,4 +1,4 @@
-import { COLORS } from "../utils/colors.js";
+import { COLORS } from "../utils/settings.js";
 import { GameObject } from "./GameObject.js";
 
 export class Ground extends GameObject {

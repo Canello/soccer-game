@@ -1,21 +1,21 @@
 export class KeyboardListener {
-    constructor(state) {
-        this.state = state;
+    constructor() {
+        this.keyPressed = "";
     }
 
-    onKeyPressed(event) {
-        this.state.setKeyPressed(event.key);
+    onKeyPress(event) {
+        this.keyPressed = event.key;
     }
 
     listen() {
         document
             .querySelector("body")
-            .addEventListener("keydown", this.onKeyPressed);
+            .addEventListener("keydown", this.onKeyPress);
     }
 
     unlisten() {
         document
             .querySelector("body")
-            .removeEventListener("keydown", this.onKeyPressed);
+            .removeEventListener("keydown", this.onKeyPress);
     }
 }

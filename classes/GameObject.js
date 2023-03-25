@@ -1,5 +1,3 @@
-import { context } from "../utils/context.js";
-
 export class GameObject {
     constructor(x, y, width, height) {
         this.x = x;
