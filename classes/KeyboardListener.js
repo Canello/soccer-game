@@ -7,15 +7,29 @@ export class KeyboardListener {
         this.keyPressed = event.key;
     }
 
+    onKeyRelease(event) {
+        if (event.key === this.keyPressed) {
+            this.keyPressed = "";
+        }
+    }
+
     listen() {
-        document
-            .querySelector("body")
-            .addEventListener("keydown", this.onKeyPress);
+        document.body.addEventListener("keydown", (event) =>
+            this.onKeyPress(event)
+        );
+
+        document.body.addEventListener("keyup", (event) =>
+            this.onKeyRelease(event)
+        );
     }
 
     unlisten() {
-        document
-            .querySelector("body")
-            .removeEventListener("keydown", this.onKeyPress);
+        document.body.removeEventListener("keydown", (event) =>
+            this.onKeyPress(event)
+        );
+
+        document.body.removeEventListener("keyup", (event) =>
+            this.onKeyRelease(event)
+        );
     }
 }
