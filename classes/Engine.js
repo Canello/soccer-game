@@ -11,19 +11,23 @@ export class Engine {
     }
 
     apply() {
-        /*
-        move player according inputs + gravity
-        move ball according gravity
-
-        check for collisions
-            handle player-player collision
-            handle player-ball collision
-            handle player-ground collision
-            handle player-goal collision
-
-            handle ball-ground collision
-            handle ball-goal collision
-        */
+        // move player according inputs + gravity
         this.player.move(this.keyboardListener.keyPressed);
+
+        // move ball according gravity
+        this.ball.move();
+
+        // check for collisions
+        //     handle player-ground collision
+        //     handle ball-ground collision
+        //     handle player-goal collision
+
+        //     handle player-player collision
+        //     handle player-ball collision
+
+        //     handle ball-goal collision
+
+        this.player.handleCollisions(this.ground, this.goal, this.ball);
+        this.ball.handleCollisions(this.ground, this.player);
     }
 }
