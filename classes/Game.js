@@ -13,7 +13,7 @@ export class Game {
         this.player = new Player(MAP.width / 3, this.ground.height);
         this.goal = new Goal(0, this.ground.height, 10, 80);
 
-        this.physicsEngine = new Engine(
+        this.engine = new Engine(
             this.ball,
             this.ground,
             this.player,
@@ -40,7 +40,7 @@ export class Game {
 
     gameLoop() {
         if (!this.isPlaying) return;
-        this.physicsEngine.apply();
+        this.engine.apply();
         this.drawer.draw();
         setTimeout(() => this.gameLoop(), DT);
     }

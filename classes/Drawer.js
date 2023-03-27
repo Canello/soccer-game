@@ -22,7 +22,7 @@ export class Drawer {
     }
 
     drawGameObject(gameObject) {
-        const { x, y, width, height, color } = gameObject;
+        const { x, y, width, height, color, opacity } = gameObject;
 
         // y starts counting from the bottom.
         // x starts counting from the leftmost side of the map, event if it is outside of the screen.
@@ -30,6 +30,7 @@ export class Drawer {
         const [xScreen, yScreen] = this.toScreenPosition(x, y, height);
 
         this.context.fillStyle = color;
+        this.context.globalAlpha = opacity;
         this.context.fillRect(xScreen, yScreen, width, height);
     }
 
