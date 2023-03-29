@@ -36,12 +36,12 @@ export class Physics {
     static reactPenetration(obj1, obj2) {
         // obj1 is the one who gets pushed.
         // obj2 is used just for calculation.
-        const [px, py] = Physics.penetration(obj1, obj2);
+        const [px, py] = Physics.getPenetration(obj1, obj2);
         obj1.vx += px * ACCELERATION_PER_PENETRATION * DT;
         obj1.vy += py * ACCELERATION_PER_PENETRATION * DT;
     }
 
-    static penetration(obj1, obj2) {
+    static getPenetration(obj1, obj2) {
         const [xCenter1, yCenter1] = obj1.center;
         const [xCenter2, yCenter2] = obj2.center;
         const xPenetration = xCenter1 - xCenter2;
