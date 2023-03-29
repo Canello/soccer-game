@@ -14,15 +14,6 @@ export class CollisionHandler {
     }
 
     handle() {
-        // handle player-ground collision
-        // handle ball-ground collision
-        // handle player-goal collision
-
-        // handle player-player collision
-        // handle player-ball collision
-
-        // handle ball-goal collision
-
         this.handlePlayerBorderCollision();
         this.handlePlayerGroundCollision();
 
@@ -30,6 +21,7 @@ export class CollisionHandler {
         this.handleBallGroundCollision();
 
         this.handlePlayerBallCollision();
+        this.handleBallGoalCollision();
     }
 
     handlePlayerBorderCollision() {
@@ -73,9 +65,14 @@ export class CollisionHandler {
     }
 
     handleBallGroundCollision() {
-        if (!this.hasBallGroundCollision()) return;
+        if (!this.isColliding(this.ball, this.ground)) return;
         this.ball.y = this.ground.y + this.ground.height;
-        this.ball.vy = -BALL_ELASTICITY * this.ball.vy;
+        const yReboundSpeed = -BALL_ELASTICITY * this.ball.vy;
+        const yMinimumReboundSpeed = 0.3;
+        this.ball.vy =
+            Math.abs(yReboundSpeed) > yMinimumReboundSpeed
+                ? yReboundSpeed
+                : yMinimumReboundSpeed;
     }
 
     hasBallGroundCollision() {
@@ -83,20 +80,10 @@ export class CollisionHandler {
     }
 
     handlePlayerBallCollision() {
-        if (!this.hasPlayerBallCollision()) return;
+        if (!this.isColliding(this.player, this.ball)) return;
         const [px, py] = this.ballPlayerPenetration();
         this.ball.vx += px * ACCELERATION_PER_PENETRATION * DT;
         this.ball.vy += py * ACCELERATION_PER_PENETRATION * DT;
-    }
-
-    hasPlayerBallCollision() {
-        const xIntercepts =
-            this.player.x + this.player.width > this.ball.x &&
-            this.player.x < this.ball.x + this.ball.width;
-        const yIntercepts =
-            this.player.y + this.player.height > this.ball.y &&
-            this.player.y < this.ball.y + this.ball.height;
-        return xIntercepts && yIntercepts;
     }
 
     ballPlayerPenetration() {
@@ -107,5 +94,16 @@ export class CollisionHandler {
         const px = ballXCenter - playerXCenter;
         const py = ballYCenter - playerYCenter;
         return [px, py];
+    }
+
+    handleBallGoalCollision() {
+        if (!this.isColliding(this.ball, this.goal)) return;
+        console.log("GOAL");
+    }
+
+    isColliding(o1, o2) {
+        const xIntercepts = o1.x + o1.width > o2.x && o1.x < o2.x + o2.width;
+        const yIntercepts = o1.y + o1.height > o2.y && o1.y < o2.y + o2.height;
+        return xIntercepts && yIntercepts;
     }
 }

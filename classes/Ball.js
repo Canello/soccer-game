@@ -12,22 +12,24 @@ export class Ball extends GameObject {
     }
 
     move() {
+        const [vxInertial, vyInertial] = this.inertialSpeed();
+
         this.x = this.x + this.vx * DT;
-        this.vx = this.inertialSpeed().vx;
+        this.vx = vxInertial;
         this.ax = -this.friction();
 
         this.y = this.y + this.vy * DT;
-        this.vy = this.inertialSpeed().vy;
+        this.vy = vyInertial;
         this.ay = -GRAVITY;
     }
 
     inertialSpeed() {
         const nextVx = this.vx + this.ax * DT;
         const nextVy = this.vy + this.ay * DT;
-        return {
-            vx: Math.abs(nextVx) <= this.ax * DT ? 0 : nextVx,
-            vy: Math.abs(nextVy) <= this.ay * DT ? 0 : nextVy,
-        };
+        return [
+            Math.abs(nextVx) <= this.ax * DT ? 0 : nextVx,
+            Math.abs(nextVy) <= this.ay * DT ? 0 : nextVy,
+        ];
     }
 
     friction() {

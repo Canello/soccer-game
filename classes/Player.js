@@ -8,12 +8,11 @@ import {
 } from "../utils/settings.js";
 
 export class Player extends GameObject {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, ground) {
         super(x, y, width, height);
-        this.width = 50;
-        this.height = 50;
         this.color = COLORS.player;
         this.opacity = 0.5;
+        this.ground = ground;
     }
 
     move(keyPressed) {
@@ -40,18 +39,22 @@ export class Player extends GameObject {
         ];
     }
 
+    friction() {
+        return this.vx === 0
+            ? 0
+            : (this.vx / Math.abs(this.vx)) * FRICTION.player;
+    }
+
     inputSpeed(keyPressed) {
         const speed = {
-            ArrowUp: [0, PLAYER_SPEED],
+            ArrowUp: [0, this.isTouchingTheGround() ? PLAYER_SPEED : 0],
             ArrowRight: [PLAYER_SPEED, 0],
             ArrowLeft: [-PLAYER_SPEED, 0],
         };
         return speed[keyPressed] ?? [0, 0];
     }
 
-    friction() {
-        return this.vx === 0
-            ? 0
-            : (this.vx / Math.abs(this.vx)) * FRICTION.player;
+    isTouchingTheGround() {
+        return this.y <= this.ground.y + this.ground.height;
     }
 }
