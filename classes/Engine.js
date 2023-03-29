@@ -1,8 +1,8 @@
 import { CollisionHandler } from "./CollisionHandler.js";
-import { KeyboardListener } from "./KeyboardListener.js";
+import { InputListener } from "./InputListener.js";
 
 export class Engine {
-    constructor(ball, ground, player, goal) {
+    constructor(ball, ground, player, goal, inputListener) {
         this.ball = ball;
         this.ground = ground;
         this.player = player;
@@ -14,12 +14,11 @@ export class Engine {
             this.player,
             this.goal
         );
-        this.keyboardListener = new KeyboardListener();
-        this.keyboardListener.listen();
+        this.inputListener = inputListener;
     }
 
     apply() {
-        this.player.move(this.keyboardListener.keyPressed);
+        this.player.move(this.inputListener.keyPressed);
         this.ball.move();
         this.collisionHandler.handle();
     }

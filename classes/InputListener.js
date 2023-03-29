@@ -1,6 +1,7 @@
-export class KeyboardListener {
+export class InputListener {
     constructor() {
         this.keyPressed = "";
+        this.listen();
     }
 
     onKeyPress(event) {

@@ -5,6 +5,7 @@ import { Drawer } from "./Drawer.js";
 import { Goal } from "./Goal.js";
 import { Ground } from "./Ground.js";
 import { Engine } from "./Engine.js";
+import { InputListener } from "./InputListener.js";
 
 export class Game {
     constructor() {
@@ -19,11 +20,13 @@ export class Game {
         );
         this.goal = new Goal(0, this.ground.height, 10, 80);
 
+        this.inputListener = new InputListener();
         this.engine = new Engine(
             this.ball,
             this.ground,
             this.player,
-            this.goal
+            this.goal,
+            this.inputListener
         );
         this.drawer = new Drawer(
             this.ball,
