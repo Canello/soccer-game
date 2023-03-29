@@ -13,7 +13,7 @@ export class Ball extends GameObject {
 
         this.friction = 0.0001;
         this.elasticity = 0.7;
-        this.yMinimumReboundSpeed = 0;
+        this.yMinimumReboundSpeed = 0.3;
     }
 
     move() {

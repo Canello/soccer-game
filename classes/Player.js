@@ -1,5 +1,6 @@
 import { GameObject } from "./GameObject.js";
-import { COLORS, PLAYER_SPEED } from "../utils/settings.js";
+import { COLORS } from "../utils/settings.js";
+import { DIRECTIONS } from "../utils/constants.js";
 import { Physics } from "./Physics.js";
 
 export class Player extends GameObject {
@@ -21,18 +22,16 @@ export class Player extends GameObject {
     }
 
     handleInput(keyPressed) {
-        const [vxInput, vyInput] = this.inputSpeed(keyPressed);
-        this.vx = vxInput ? vxInput : this.vx;
-        this.vy = vyInput ? vyInput : this.vy;
-    }
-
-    inputSpeed(keyPressed) {
-        const speed = {
-            ArrowUp: [0, this.isTouchingTheGround() ? PLAYER_SPEED : 0],
-            ArrowRight: [PLAYER_SPEED, 0],
-            ArrowLeft: [-PLAYER_SPEED, 0],
+        const keyToDirection = {
+            ArrowUp: DIRECTIONS.up,
+            ArrowRight: DIRECTIONS.right,
+            ArrowLeft: DIRECTIONS.left,
         };
-        return speed[keyPressed] ?? [0, 0];
+        Physics.inputSpeed(
+            this,
+            keyToDirection[keyPressed],
+            this.isTouchingTheGround()
+        );
     }
 
     isTouchingTheGround() {

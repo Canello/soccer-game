@@ -1,8 +1,10 @@
+import { DIRECTIONS } from "../utils/constants.js";
 import {
     ACCELERATION_PER_PENETRATION,
     DT,
     GRAVITY,
     MAP,
+    PLAYER_SPEED,
 } from "../utils/settings.js";
 
 export class Physics {
@@ -30,8 +32,6 @@ export class Physics {
         obj.ax = obj.vx === 0 ? 0 : -(obj.vx / Math.abs(obj.vx)) * obj.friction;
         obj.ay = -GRAVITY;
     }
-
-    reactInput() {}
 
     static reactPenetration(obj1, obj2) {
         // obj1 is the one who gets pushed.
@@ -66,5 +66,17 @@ export class Physics {
             Math.abs(yReboundSpeed) > obj.yMinimumReboundSpeed
                 ? yReboundSpeed
                 : obj.yMinimumReboundSpeed;
+    }
+
+    static inputSpeed(obj, direction, isTouchingTheGround) {
+        const speed = {
+            [DIRECTIONS.up]: [0, isTouchingTheGround ? PLAYER_SPEED : 0],
+            [DIRECTIONS.right]: [PLAYER_SPEED, 0],
+            [DIRECTIONS.left]: [-PLAYER_SPEED, 0],
+        };
+        const [vxInput, vyInput] = speed[direction] ?? [0, 0];
+
+        obj.vx = vxInput ? vxInput : obj.vx;
+        obj.vy = vyInput ? vyInput : obj.vy;
     }
 }
