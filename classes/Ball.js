@@ -1,5 +1,6 @@
 import { GameObject } from "./GameObject.js";
-import { COLORS, DT, FRICTION, GRAVITY, MAP } from "../utils/settings.js";
+import { COLORS, MAP } from "../utils/settings.js";
+import { Physics } from "./Physics.js";
 
 export class Ball extends GameObject {
     constructor(x, y, width, height) {
@@ -9,32 +10,13 @@ export class Ball extends GameObject {
         this.x = MAP.width / 2 - this.width / 2;
         this.y = MAP.height / 2 - this.height / 2;
         this.color = COLORS.ball;
+
+        this.friction = 0.0001;
+        this.elasticity = 0.7;
+        this.yMinimumReboundSpeed = 0;
     }
 
     move() {
-        const [vxInertial, vyInertial] = this.inertialSpeed();
-
-        this.x = this.x + this.vx * DT;
-        this.vx = vxInertial;
-        this.ax = -this.friction();
-
-        this.y = this.y + this.vy * DT;
-        this.vy = vyInertial;
-        this.ay = -GRAVITY;
-    }
-
-    inertialSpeed() {
-        const nextVx = this.vx + this.ax * DT;
-        const nextVy = this.vy + this.ay * DT;
-        return [
-            Math.abs(nextVx) <= this.ax * DT ? 0 : nextVx,
-            Math.abs(nextVy) <= this.ay * DT ? 0 : nextVy,
-        ];
-    }
-
-    friction() {
-        return this.vx === 0
-            ? 0
-            : (this.vx / Math.abs(this.vx)) * FRICTION.ball;
+        Physics.tick(this);
     }
 }

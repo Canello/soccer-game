@@ -1,48 +1,29 @@
 import { GameObject } from "./GameObject.js";
-import {
-    COLORS,
-    DT,
-    FRICTION,
-    GRAVITY,
-    PLAYER_SPEED,
-} from "../utils/settings.js";
+import { COLORS, PLAYER_SPEED } from "../utils/settings.js";
+import { Physics } from "./Physics.js";
 
 export class Player extends GameObject {
     constructor(x, y, width, height, ground) {
         super(x, y, width, height);
         this.color = COLORS.player;
         this.opacity = 0.5;
+
+        this.friction = 0.05;
+        this.elasticity = 0;
+        this.yMinimumReboundSpeed = 0;
+
         this.ground = ground;
     }
 
     move(keyPressed) {
-        const [vxInertial, vyInertial] = this.inertialSpeed();
+        Physics.tick(this);
+        this.handleInput(keyPressed);
+    }
+
+    handleInput(keyPressed) {
         const [vxInput, vyInput] = this.inputSpeed(keyPressed);
-
-        this.x = this.x + this.vx * DT;
-        this.vx = vxInput ? vxInput : vxInertial;
-        this.ax = -this.friction();
-
-        this.y = this.y + this.vy * DT;
-        this.vy = vyInput ? vyInput : vyInertial;
-        this.ay = -GRAVITY;
-    }
-
-    inertialSpeed() {
-        const dvx = this.ax * DT;
-        const dvy = this.ay * DT;
-        const nextVx = this.vx + dvx;
-        const nextVy = this.vy + dvy;
-        return [
-            Math.abs(nextVx) <= dvx ? 0 : nextVx,
-            Math.abs(nextVy) <= dvy ? 0 : nextVy,
-        ];
-    }
-
-    friction() {
-        return this.vx === 0
-            ? 0
-            : (this.vx / Math.abs(this.vx)) * FRICTION.player;
+        this.vx = vxInput ? vxInput : this.vx;
+        this.vy = vyInput ? vyInput : this.vy;
     }
 
     inputSpeed(keyPressed) {

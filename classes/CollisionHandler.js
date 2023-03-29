@@ -1,9 +1,5 @@
-import {
-    ACCELERATION_PER_PENETRATION,
-    BALL_ELASTICITY,
-    DT,
-    MAP,
-} from "../utils/settings.js";
+import { MAP } from "../utils/settings.js";
+import { Physics } from "./Physics.js";
 
 export class CollisionHandler {
     constructor(ball, ground, player, goal) {
@@ -14,96 +10,49 @@ export class CollisionHandler {
     }
 
     handle() {
-        this.handlePlayerBorderCollision();
-        this.handlePlayerGroundCollision();
+        this.handleBorderCollision(this.player);
+        this.handleGroundCollision(this.player);
 
-        this.handleBallBorderCollision();
-        this.handleBallGroundCollision();
+        this.handleBorderCollision(this.ball);
+        this.handleGroundCollision(this.ball);
 
         this.handlePlayerBallCollision();
         this.handleBallGoalCollision();
     }
 
-    handlePlayerBorderCollision() {
-        if (!this.hasPlayerBorderCollision()) return;
-        const isLeftsideCollision = this.player.x < 0;
-        if (isLeftsideCollision) {
-            this.player.x = 0;
-        } else {
-            this.player.x = MAP.width - this.player.width;
-        }
+    handleBorderCollision(obj) {
+        if (!this.isCollidingWithBorder(obj)) return;
+        Physics.borderRebound(obj);
     }
 
-    hasPlayerBorderCollision() {
-        return (
-            this.player.x < 0 || this.player.x + this.player.width > MAP.width
-        );
-    }
-
-    handlePlayerGroundCollision() {
-        if (!this.hasPlayerGroundCollision()) return;
-        this.player.y = this.ground.y + this.ground.height;
-    }
-
-    hasPlayerGroundCollision() {
-        return this.player.y < this.ground.y + this.ground.height;
-    }
-
-    handleBallBorderCollision() {
-        if (!this.hasBallBorderCollision()) return;
-        const isLeftsideCollision = this.ball.x < 0;
-        if (isLeftsideCollision) {
-            this.ball.x = 0;
-        } else {
-            this.ball.x = MAP.width - this.ball.width;
-        }
-        this.ball.vx = -BALL_ELASTICITY * this.ball.vx;
-    }
-
-    hasBallBorderCollision() {
-        return this.ball.x < 0 || this.ball.x + this.ball.width > MAP.width;
-    }
-
-    handleBallGroundCollision() {
-        if (!this.isColliding(this.ball, this.ground)) return;
-        this.ball.y = this.ground.y + this.ground.height;
-        const yReboundSpeed = -BALL_ELASTICITY * this.ball.vy;
-        const yMinimumReboundSpeed = 0.3;
-        this.ball.vy =
-            Math.abs(yReboundSpeed) > yMinimumReboundSpeed
-                ? yReboundSpeed
-                : yMinimumReboundSpeed;
-    }
-
-    hasBallGroundCollision() {
-        return this.ball.y < this.ground.y + this.ground.height;
+    handleGroundCollision(obj) {
+        if (!this.isCollidingWithGround(obj)) return;
+        Physics.groundRebound(obj, this.ground);
     }
 
     handlePlayerBallCollision() {
-        if (!this.isColliding(this.player, this.ball)) return;
-        const [px, py] = this.ballPlayerPenetration();
-        this.ball.vx += px * ACCELERATION_PER_PENETRATION * DT;
-        this.ball.vy += py * ACCELERATION_PER_PENETRATION * DT;
-    }
-
-    ballPlayerPenetration() {
-        const playerXCenter = this.player.x + this.player.width / 2;
-        const playerYCenter = this.player.y + this.player.height / 2;
-        const ballXCenter = this.ball.x + this.ball.width / 2;
-        const ballYCenter = this.ball.y + this.ball.height / 2;
-        const px = ballXCenter - playerXCenter;
-        const py = ballYCenter - playerYCenter;
-        return [px, py];
+        if (!this.areColliding(this.player, this.ball)) return;
+        Physics.reactPenetration(this.ball, this.player);
     }
 
     handleBallGoalCollision() {
-        if (!this.isColliding(this.ball, this.goal)) return;
+        if (!this.areColliding(this.ball, this.goal)) return;
         console.log("GOAL");
     }
 
-    isColliding(o1, o2) {
-        const xIntercepts = o1.x + o1.width > o2.x && o1.x < o2.x + o2.width;
-        const yIntercepts = o1.y + o1.height > o2.y && o1.y < o2.y + o2.height;
+    areColliding(obj1, obj2) {
+        const xIntercepts =
+            obj1.x + obj1.width > obj2.x && obj1.x < obj2.x + obj2.width;
+        const yIntercepts =
+            obj1.y + obj1.height > obj2.y && obj1.y < obj2.y + obj2.height;
         return xIntercepts && yIntercepts;
+    }
+
+    isCollidingWithGround(obj) {
+        return obj.y < this.ground.y + this.ground.height;
+    }
+
+    isCollidingWithBorder(obj) {
+        return obj.x < 0 || obj.x + obj.width > MAP.width;
     }
 }
